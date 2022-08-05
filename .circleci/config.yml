@@ -100,7 +100,10 @@ jobs:
           command: |
             cd backend
             npm run test
-
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+          
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -112,7 +115,7 @@ jobs:
           name: Frontend audit
           command: |
             cd frontend
-#            npm install
+            npm install
             npm audit fix --audit-level=critical
       - slack/notify:
           event: fail
