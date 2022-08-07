@@ -176,7 +176,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
       - add_ssh_keys:
@@ -187,7 +187,6 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            apt-get -y install yum 
             yum install -y tar gzip
 #            exit 1
       - run:
@@ -198,7 +197,7 @@ jobs:
       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
           when_to_run: on_fail
-          
+
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
