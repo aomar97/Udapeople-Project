@@ -180,7 +180,6 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          # You can get this ID in the section where you registered the SSH Key
           fingerprints: ["23:24:49:13:1b:30:35:ca:53:53:a7:a6:c3:44:ac:35"] 
       - attach_workspace:
           at: ~/
@@ -267,8 +266,8 @@ workflows:
 #          filters:
 #            branches:
 #              only: [test-feature-branch]
-#      - configure-infrastructure:
-#          requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
 #      - run-migrations:
 #          requires: [configure-infrastructure]
 #      - deploy-frontend:
