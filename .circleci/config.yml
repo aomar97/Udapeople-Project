@@ -187,6 +187,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            apt-get -y install yum 
             yum install -y tar gzip
 #            exit 1
       - run:
@@ -195,7 +196,9 @@ jobs:
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
 #            exit 1
       # Here's where you will add some code to rollback on failure      
-
+      - destroy-environment:
+          when_to_run: on_fail
+          
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
