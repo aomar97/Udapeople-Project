@@ -165,15 +165,15 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text >> .circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt
+            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text >> ~/.circleci/ansible/inventory.txt
+            cat ~/.circleci/ansible/inventory.txt
 #            exit 1
       - persist_to_workspace:
           root: ~/
           paths:
             - .circleci/ansible/inventory.txt      
-      - destroy-environment:
-          when_to_run: on_fail
+#      - destroy-environment:
+#          when_to_run: on_fail
 
   configure-infrastructure:
     docker:
@@ -208,7 +208,7 @@ jobs:
           command: |
             cd backend
             npm install
-            npm run migrations > ~/project/backend/migrations_dump.txt
+            npm run migrations > ~/backend/migrations_dump.txt
 #            exit 1
       - run:
           name: Send migration status to kvdb.io
