@@ -144,7 +144,7 @@ jobs:
     steps:
       - checkout
       - run: yum install -y tar gzip
-            - run:
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -193,6 +193,7 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+            cat ".circleci/ansible/inventory.txt"
 #            exit 1
       # Here's where you will add some code to rollback on failure      
 
