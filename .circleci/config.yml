@@ -171,6 +171,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            dpkg --configure -a
 #            exit 1
       - run:
           name: Configure server
