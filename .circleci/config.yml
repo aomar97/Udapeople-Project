@@ -180,7 +180,6 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-    
       - add_ssh_keys:
           fingerprints: ["23:24:49:13:1b:30:35:ca:53:53:a7:a6:c3:44:ac:35"] 
       - attach_workspace:
@@ -253,18 +252,18 @@ jobs:
 workflows:
   udapeople:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-         requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+#      - build-frontend
+#      - build-backend
+#      - test-frontend:
+#          requires: [build-frontend]
+#      - test-backend:
+#         requires: [build-backend]
+#      - scan-backend:
+#          requires: [build-backend]
+#      - scan-frontend:
+#          requires: [build-frontend]
+      - deploy-infrastructure
+#          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
 #          filters:
 #            branches:
 #              only: [test-feature-branch]
