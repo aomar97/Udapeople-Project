@@ -9,7 +9,7 @@
     gather_facts: false
     vars:
       - python_interpreter: /usr/bin/python3.7
-      - host_key_checking: false
+#      - host_key_checking: false
       - stdout_callback: yaml
       - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
       - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
