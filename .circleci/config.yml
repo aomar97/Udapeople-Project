@@ -190,10 +190,11 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm install
-            npm audit fix
-            npm run migrations > migrations_dump.txt
-            cat migrations_dump.txt
+            sudo npm install
+            npm audit fix --audit-level=critical --force
+            npm run build
+            sudo npm run migrations > migration.log
+            cat migration.log
 #            exit 1
       - run:
           name: Send migration status to kvdb.io
@@ -249,10 +250,10 @@ workflows:
 #          requires: [build-frontend]
       - deploy-infrastructure
 #          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
+#      - configure-infrastructure:
+#          requires: [deploy-infrastructure]
       - run-migrations:
-          requires: [configure-infrastructure]
+          requires: [deploy-infrastructure]
 #      - deploy-frontend:
 #          requires: [run-migrations]
 #      - deploy-backend:
