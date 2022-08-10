@@ -67,8 +67,8 @@ jobs:
           name: Back-end build
           command: |
             cd backend
-            npm install
-            npm run build
+            sudo npm install
+            sudo npm run build
 #            exit 1
       - save_cache:
           paths: [backend/node_modules]
@@ -202,6 +202,7 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             
             cd backend
+            sudo npm install
             sudo npm run migrations > migration.log
             cat migration.log
 #            exit 1
