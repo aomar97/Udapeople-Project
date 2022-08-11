@@ -120,9 +120,6 @@ export enum SalaryType {
   HOURLY = 'hourly',
 }
 
-export function getDateFromString(date: string): Date {
-  return moment(date).format('M/D/YYYY');
-}
 
 function getGenderFromEnum(gender: string): Gender {
   return Gender[Object.keys(Gender).find(key => Gender[key] === gender)];
