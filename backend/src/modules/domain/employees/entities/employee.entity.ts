@@ -62,10 +62,10 @@ export class Employee extends AggregateRoot<number> {
   public personalEmail: string;
 
   @Column({ nullable: true })
-  public birthdate: Date;
+  public birthdate: string;
 
   @Column()
-  public startDate: Date;
+  public startDate: string;
 
   @Column({ length: 200, nullable: true })
   public address: string;
@@ -95,7 +95,7 @@ export class Employee extends AggregateRoot<number> {
   public city: string;
 
   @Column()
-  public effectiveDate: Date;
+  public effectiveDate: string;
 
   @Column('decimal')
   public salary: number;
