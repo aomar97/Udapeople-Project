@@ -8,8 +8,8 @@ export class CreateEmployee implements ICommand {
   displayName?: string;
   companyEmail: string;
   personalEmail?: string;
-  birthdate: string;
-  startDate: string;
+  birthdate: Date;
+  startDate: Date;
   address?: string;
   phoneNumber?: string;
   bankName?: string;
@@ -20,13 +20,13 @@ export class CreateEmployee implements ICommand {
   region: string;
   city: string;
   salary: string;
-  effectiveDate: string;
+  effectiveDate: Date;
   salaryType: string;
 
   constructor(firstName: string, middleName: string, lastName: string, secondLastName: string,
-              displayName: string, companyEmail: string, personalEmail: string, birthdate: string, startDate: string,
+              displayName: string, companyEmail: string, personalEmail: string, birthdate: Date, startDate: Date,
               address: string, phoneNumber: string, bankName: string, accountNumber: string, gender: string,
-              tags: string, country: string, region: string, city: string, salary: string, effectiveDate: string, salaryType: string) {
+              tags: string, country: string, region: string, city: string, salary: string, effectiveDate: Date, salaryType: string) {
     this.accountNumber = accountNumber;
     this.address = address;
     this.firstName = firstName;
