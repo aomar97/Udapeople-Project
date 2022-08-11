@@ -22,15 +22,15 @@ export class Employee extends AggregateRoot<number> {
       this.salary = +params.salary;
       this.salaryType = getSalaryTypeFromEnum(params.salaryType);
       this.secondLastName = params.secondLastName;
-      this.startDate = getDateFromString(params.startDate);
+      this.startDate = (params.startDate);
       this.tags = params.tags;
       this.city = params.city;
       this.country = params.country;
       this.displayName = params.displayName;
-      this.effectiveDate = getDateFromString(params.effectiveDate);
+      this.effectiveDate = (params.effectiveDate);
       this.companyEmail = params.companyEmail;
       this.bankName = params.bankName;
-      this.birthdate = getDateFromString(params.birthdate);
+      this.birthdate = (params.birthdate);
     }
 
     // this.apply(new EmployeeCreated(this.id, this.firstName));
@@ -62,10 +62,10 @@ export class Employee extends AggregateRoot<number> {
   public personalEmail: string;
 
   @Column({ nullable: true })
-  public birthdate: Date;
+  public birthdate: string;
 
   @Column()
-  public startDate: Date;
+  public startDate: string;
 
   @Column({ length: 200, nullable: true })
   public address: string;
@@ -95,7 +95,7 @@ export class Employee extends AggregateRoot<number> {
   public city: string;
 
   @Column()
-  public effectiveDate: Date;
+  public effectiveDate: string;
 
   @Column('decimal')
   public salary: number;
