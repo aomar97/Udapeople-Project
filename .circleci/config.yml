@@ -330,6 +330,40 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
 #      - destroy-environment
 
+  smoke_test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - install_nodejs
+      - run:
+          name: backend smoke test
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople")
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+                return 0
+            else
+                return 1
+            fi
+      - run:
+          name: frontend smoke test
+          command: |
+            FRONTEND_SITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:5}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com
+            if curl -s $FRONTEND_SITE | grep "Welcome"
+            then
+                return 1
+            else
+                return 1
+            fi
+#      - destroy_environment
+#      - revert-migrations      
+
+
+
 workflows:
   udapeople:
     jobs:
@@ -344,7 +378,6 @@ workflows:
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
-#           requires: [build-backend, build-frontend]
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
@@ -354,8 +387,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-#      - smoke-test:
-#          requires: [deploy-backend, deploy-frontend]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
 #      - cloudfront-update:
 #          requires: [smoke-test]
 #      - cleanup:
