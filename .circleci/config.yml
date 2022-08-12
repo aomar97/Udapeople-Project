@@ -51,7 +51,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl --insecure  https://kvdb.io/375CHA11i2j6N8u2VakLXj/migration_<< parameters.Workflow_ID >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/J6g8gc58Gpad8UxpwEJc8M/migration_<< parameters.Workflow_ID >>)
             if(( $SUCCESS==1 )); 
             then
             #  cd ~/project/backend
@@ -167,24 +167,7 @@ jobs:
     steps:
       - checkout
       - run: yum install -y tar gzip
-      - run:
-          name: Ensure back-end infrastructure exists
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --tags project=udapeople \
-              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:5}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"  
-#              exit 1
-      - run:
-          name: Ensure front-end infrastructure exist
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
-              --tags project=udapeople \
-              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:5}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:5}"  
-#              exit 1
+
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -248,7 +231,7 @@ jobs:
           command: |   
               if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
               then
-                curl https://kvdb.io/375CHA11i2j6N8u2VakLXj/migration_${CIRCLE_WORKFLOW_ID:0:5}  -d '1'
+                curl https://kvdb.io/J6g8gc58Gpad8UxpwEJc8M/migration_${CIRCLE_WORKFLOW_ID:0:5} -d '1'
               fi
 #              exit 1
      # Here's where you will add some code to rollback on failure      
@@ -287,17 +270,17 @@ workflows:
     jobs:
       - build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-         requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+#      - test-frontend:
+#          requires: [build-frontend]
+#      - test-backend:
+#         requires: [build-backend]
+#      - scan-backend:
+#          requires: [build-backend]
+#      - scan-frontend:
+#          requires: [build-frontend]
       - deploy-infrastructure:
-#           requires: [build-backend]
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+           requires: [build-backend, build-frontend]
+#          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
