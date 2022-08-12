@@ -24,6 +24,15 @@ commands:
             unzip awscliv2.zip
             sudo ./aws/install
 
+  install_nodejs:
+    description: Install Node.js 13
+    steps:
+      - run:
+          name: Install Node.js 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            sudo apt install -y nodejs
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -109,8 +118,7 @@ jobs:
           command: |
             cd frontend
             npm run test
-
-                
+            
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -205,6 +213,7 @@ jobs:
       - checkout
       - install_awscli
       - install_ansible
+      - run: yum install -y tar gzip
       - add_ssh_keys:
           fingerprints: ["23:24:49:13:1b:30:35:ca:53:53:a7:a6:c3:44:ac:35"]
       - attach_workspace:
@@ -282,14 +291,15 @@ jobs:
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:5}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:5} --recursive
       # Here's where you will add some code to rollback on failure      
-      - destroy-environment
+#      - destroy-environment
   deploy-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
       - install_ansible
+      - install_nodejs
       - add_ssh_keys:
           fingerprints: ["23:24:49:13:1b:30:35:ca:53:53:a7:a6:c3:44:ac:35"]
       - attach_workspace:
@@ -318,7 +328,7 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment
+#      - destroy-environment
 
 workflows:
   udapeople:
