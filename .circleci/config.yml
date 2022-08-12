@@ -174,6 +174,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: yum install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -212,7 +213,7 @@ jobs:
       - checkout
       - install_awscli
       - install_ansible
-      - run: yum install -y tar gzip
+      - install_nodejs
       - add_ssh_keys:
           fingerprints: ["23:24:49:13:1b:30:35:ca:53:53:a7:a6:c3:44:ac:35"]
       - attach_workspace:
