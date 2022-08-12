@@ -241,15 +241,14 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - install_awscli
       - attach_workspace:
           at: ~/
       - run:
           name: Install dependencies
           command: |
             cd frontend
-            sudo npm install webpack-dev-server -g
-            sudo npm install
-
+            npm install
       - run:
           name: Get backend url
           command: |
@@ -257,12 +256,15 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            cat frontend/.env
+            cat frontend/.environments
 
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
+            cd frontend
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:5}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:5} --recursive
       # Here's where you will add some code to rollback on failure      
 
 workflows:
@@ -285,8 +287,8 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-#      - deploy-frontend:
-#          requires: [run-migrations]
+      - deploy-frontend:
+          requires: [run-migrations]
 #      - deploy-backend:
 #          requires: [run-migrations]
 #      - smoke-test:
