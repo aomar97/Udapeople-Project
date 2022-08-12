@@ -330,7 +330,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
 #      - destroy-environment
 
-  smoke_test:
+  smoke-test:
     docker:
       - image: cimg/base:stable
     steps:
