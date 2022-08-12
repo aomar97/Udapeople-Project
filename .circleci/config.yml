@@ -3,6 +3,17 @@ orbs:
   slack: circleci/slack@4.10.1
 
 commands:
+  install_ansible:
+    description: Install Ansible
+    steps:
+      - run:
+          name: Install Ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -y
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
+
   install_awscli:
     description: Install AWS CLI v2
     steps:
@@ -189,19 +200,15 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
+      - install_ansible
       - add_ssh_keys:
           fingerprints: ["23:24:49:13:1b:30:35:ca:53:53:a7:a6:c3:44:ac:35"] 
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible
-#            exit 1
       - run:
           name: Configure server
           command: |
