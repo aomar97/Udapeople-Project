@@ -3,6 +3,16 @@ orbs:
   slack: circleci/slack@4.10.1
 
 commands:
+  install_awscli:
+    description: Install AWS CLI v2
+    steps:
+      - run:
+          name: Install AWS CLI v2
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -21,14 +31,16 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here     
+      Workflow_ID:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:5}    
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            SUCCESS=$(curl --insecure  https://kvdb.io/375CHA11i2j6N8u2VakLXj/migration_<< parameters.Workflow_ID >>)
             if(( $SUCCESS==1 )); 
             then
             #  cd ~/project/backend
@@ -43,6 +55,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-build]      
       - run:
           name: Build front-end
           command: |
@@ -59,6 +73,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Back-end build
           command: |
@@ -176,6 +192,7 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - install_awscli
       - add_ssh_keys:
           fingerprints: ["23:24:49:13:1b:30:35:ca:53:53:a7:a6:c3:44:ac:35"] 
       - attach_workspace:
@@ -184,23 +201,10 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-#            dpkg --configure -a
 #            exit 1
       - run:
           name: Configure server
           command: |
-            echo ENVIRONMENT=production > "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
             cat ".circleci/ansible/inventory.txt"
 #            exit 1
@@ -210,9 +214,8 @@ jobs:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - checkout 
-      - restore_cache:
-          keys: [backend-build]           
+      - checkout
+      - install_awscli           
       - run:
           name: Run migrations
           command: |
@@ -230,7 +233,6 @@ jobs:
             
             cd backend
             npm install
-            npm run build
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
 #            exit 1
