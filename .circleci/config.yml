@@ -47,8 +47,8 @@ commands:
           name: Destroy environments
           when: << parameters.when_to_run >>
           command: |
-            aws s3 rm s3://udapeople-<< parameters.Workflow_ID >> --recursive
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
+            aws s3 rm s3://udapeople-<< parameters.Workflow_ID >> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
 
   revert-migrations:
@@ -378,9 +378,10 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_awscli
       - install_nodejs
       - run:
           name: Save Old Workflow ID to kvdb.io
@@ -402,9 +403,10 @@ jobs:
   
   cleanup:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_awscli
       - install_nodejs
       - run:
           name: Remove old stacks and files
