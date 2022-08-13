@@ -220,12 +220,12 @@ jobs:
       - run:
           name: Configure server
           command: |
-            echo ENVIRONMENT=production > "backend/.env"
+            echo NODE_ENV=production >> "backend/.env"
+            echo VERSION= "1"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
             echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"  
             echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
             echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
@@ -246,12 +246,12 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            echo ENVIRONMENT=production > "backend/.env"
+            echo NODE_ENV=production >> "backend/.env"
+            echo VERSION= "1"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
             echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"  
             echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
             echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
@@ -351,16 +351,6 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: frontend smoke test
-          command: |
-            FRONTEND_SITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:5}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com
-            if curl -s $FRONTEND_SITE | grep "Welcome"
-            then
-                exit 0
-            else
-                exit 1
-            fi
-      - run:
           name: backend smoke test
           command: |
             export BACKEND_IP=$(tail -1 .circleci/ansible/inventory.txt)
@@ -372,9 +362,18 @@ jobs:
             else
                 exit 1
             fi
-      
-#      - destroy-environment
-#      - revert-migrations      
+      - run:
+          name: frontend smoke test
+          command: |
+            FRONTEND_SITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:5}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com
+            if curl -s $FRONTEND_SITE | grep "Welcome"
+            then
+                exit 1
+            else
+                exit 1
+            fi
+      - destroy-environment
+      - revert-migrations      
 
 workflows:
   udapeople:
