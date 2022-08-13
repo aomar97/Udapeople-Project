@@ -1,23 +1,23 @@
 ---
   - name: "Creates backend app directory"
     file:
-      path: ~/backend-app
+      path: /home/backed-app
       state: directory
 
   - name: "Unarchive backend files"
     unarchive:
       src: "files/artifact.tar.gz"
-      dest: "~/backend-app"
+      dest: "/home/backed-app"
 
   - name: "Installing Node Dependencies"
     shell: |
-      cd ~/backend-app
+      cd /home/backed-app
       npm install
   
   - name: "Executing Node app with PM2"
     shell: |
-      cd ~/backend-app/dist
-      pm2 start main.js -f
+      cd /home/backed-app/dist
+      pm2 start main.js
     environment:
       NODE_ENV: production
       VERSION: "1"

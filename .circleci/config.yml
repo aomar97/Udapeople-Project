@@ -230,7 +230,11 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
 
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-            cat ".circleci/ansible/inventory.txt"      
+            cat ".circleci/ansible/inventory.txt"
+      - run:
+          name: configure node-exporter
+          command: |
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/node-exporter.yml      
       - destroy-environment
 
   run-migrations:
@@ -433,3 +437,19 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-frontend, deploy-backend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
