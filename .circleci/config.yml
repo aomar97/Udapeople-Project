@@ -348,6 +348,8 @@ jobs:
       - checkout
       - install_awscli
       - install_nodejs
+      - attach_workspace:
+          at: ~/
       - run:
           name: frontend smoke test
           command: |
@@ -361,9 +363,9 @@ jobs:
       - run:
           name: backend smoke test
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople")
+            export BACKEND_IP=$(tail -1 .circleci/ansible/inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo API_URL= $API_URL
+            echo "${API_URL}"
             if curl -s "${API_URL}/api/status" | grep "ok"
             then
                 exit 0
