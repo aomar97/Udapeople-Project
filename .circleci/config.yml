@@ -370,7 +370,7 @@ jobs:
                 exit 1
             fi
       
-      - destroy_environment
+      - destroy-environment
       - revert-migrations      
 
 workflows:
