@@ -1,0 +1,6 @@
+1. Public Url to GitHub repository (not private) [URL01]
+	https://github.com/aomar97/Udapeople-Project
+2. Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]
+	http://udapeople-e7bc4.s3-website-us-east-1.amazonaws.com
+3. Distribution domain name
+	https://d519emzds5y44.cloudfront.net 
